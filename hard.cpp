@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
 // запись в файл
     ofstream out_file(argv[3], std::ios::binary);
     out_file << "P5\n";
-    out_file << row << " " << col << "\n";
+    out_file << row << " " << col << "\n          ";
     out_file << "255\n";
     for (int i = 0; i < row * col; i++) {
         out_file.put((char) pixels[i]);
