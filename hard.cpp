@@ -37,7 +37,7 @@ void calc(int &all_pixel_count, int* &pixel_count, long long* &intensity_sum,
             double n3 = (u3 - u), p3 = ((double) u3 / q3 - u);
             double n4 = (u4 - u), p4 = ((double) u4 / q4 - u);
 
-            double sigma = ((p1 * n1 + p2 * n2) + (p3 * n3 + p4 * n4)) / all_pixel_count;
+            double sigma = ((p1 * n1 + p2 * n2) + (p3 * n3 +     p4 * n4)) / all_pixel_count;
 
             if (sigma > t_best_sigma) {
                 t_bounds[0] = f0;
