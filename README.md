@@ -11,7 +11,7 @@ Stdout+stderr (./omp4 0 in.pgm out0.pgm):
 ```
 OK [program completed with code 0]
     [STDERR]:  
-    [STDOUT]: Time (2 thread(s)): 17.8492 ms
+    [STDOUT]: Time (2 thread(s)): 14.7001 ms
 77 130 187 2817.483658
 
 ```
@@ -20,7 +20,7 @@ Stdout+stderr (./omp4 -1 in.pgm out-1.pgm):
 ```
 OK [program completed with code 0]
     [STDERR]:  
-    [STDOUT]: Time (1 thread(s)): 35.6222 ms
+    [STDOUT]: Time (1 thread(s)): 28.1484 ms
 77 130 187 2817.483658
 
 ```
