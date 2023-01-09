@@ -34,10 +34,10 @@ void calc(int &all_pixel_count, int* &pixel_count, int* &intensity_sum,
             double u = intensity_sum[255] / all_pixel_count;
 
             double sigma = ((q1 * (u1 - u) * (u1 - u) +
-                            q2 * (u2 - u) * (u2 - u)) +
+                             q2 * (u2 - u) * (u2 - u)) +
                             (q3 * (u3 - u) * (u3 - u) +
-                            q4 * (u4 - u) * (u4 - u))) / all_pixel_count;
-            
+                             q4 * (u4 - u) * (u4 - u))) / all_pixel_count;
+
             if (sigma > t_best_sigma) {
                 t_bounds[0] = f0;
                 t_bounds[1] = f1;
@@ -172,11 +172,9 @@ int main(int argc, char* argv[]) {
         {
             // префиксные суммы для быстрого вычисления дисперсии
             intensity_sum[0] = 0;
-            for (int i = 1; i < 256; i++) {
-                intensity_sum[i] = intensity_sum[i - 1] + i * hist[i];
-            }
             pixel_count[0] = hist[0];
             for (int i = 1; i < 256; i++) {
+                intensity_sum[i] = intensity_sum[i - 1] + i * hist[i];
                 pixel_count[i] = pixel_count[i - 1] + hist[i];
             }
         }
@@ -215,7 +213,7 @@ int main(int argc, char* argv[]) {
 // запись в файл
     ofstream out_file(argv[3], std::ios::binary);
     out_file << "P5\n";
-    out_file << row << " " << col << "\n          ";
+    out_file << row << " " << col << "\n";
     out_file << "255\n";
     for (int i = 0; i < row * col; i++) {
         out_file.put((char) pixels[i]);
