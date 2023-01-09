@@ -4,13 +4,6 @@
 
 Build log (can be empty):
 ```
-D:\a\itmo-comp-arch22-lab4-As1i1\itmo-comp-arch22-lab4-As1i1\hard.cpp:166:19: warning: implicit conversion from 'int' to 'char' changes value from 170 to -86 [-Wconstant-conversion]
-            tmp = 170;
-                ~ ^~~
-D:\a\itmo-comp-arch22-lab4-As1i1\itmo-comp-arch22-lab4-As1i1\hard.cpp:168:19: warning: implicit conversion from 'int' to 'char' changes value from 255 to -1 [-Wconstant-conversion]
-            tmp = 255;
-                ~ ^~~
-2 warnings generated.
 
 ```
 
@@ -18,8 +11,8 @@ Stdout+stderr (./omp4 0 in.pgm out0.pgm):
 ```
 OK [program completed with code 0]
     [STDERR]:  
-    [STDOUT]: Time (2 thread(s)): 30.6584 ms
-77 130 187 2817.425552
+    [STDOUT]: Time (2 thread(s)): 13.467 ms
+77 130 187 2817.408931
 
 ```
      
@@ -27,8 +20,8 @@ Stdout+stderr (./omp4 -1 in.pgm out-1.pgm):
 ```
 OK [program completed with code 0]
     [STDERR]:  
-    [STDOUT]: Time (-1 thread(s)): 37.5164 ms
-77 130 187 2817.425552
+    [STDOUT]: Time (1 thread(s)): 26.3638 ms
+77 130 187 2817.408931
 
 ```
 
