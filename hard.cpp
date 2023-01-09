@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 #pragma omp parallel if (atoi(argv[1]) != -1) firstprivate(t_hist)  num_threads(thread_num) default(shared)
     {
         // вычисление гистограммы
-#pragma omp for schedule(static, chunk_size) nowait
+#pragma omp for schedule(dynamic, chunk_size) nowait
         for (int i = 0; i < row * col; i += 4) {
             t_hist[pixels[i]]++;
             t_hist[pixels[i + 1]]++;
@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-#pragma omp for schedule(static, 10) nowait
+#pragma omp for schedule(dynamic, 6) nowait
         for (int f0 = 0; f0 < 255; f0++) {
             calc(all_pixel_count, pixel_count, intensity_sum,
                  t_bounds, t_best_sigma, f0);
@@ -193,7 +193,7 @@ int main(int argc, char* argv[]) {
                 best_sigma = t_best_sigma;
             }
         }
-#pragma omp for schedule(static, chunk_size)
+#pragma omp for schedule(dynamic, chunk_size)
         for (int i = 0; i < all_pixel_count; ++i) {
             if (pixels[i] >= 0 && pixels[i] <= bounds[0]) {
                 pixels[i] = 0;
@@ -220,7 +220,7 @@ int main(int argc, char* argv[]) {
     }
     out_file.close();
 
-    printf("%u %u %u %f\n", bounds[0], bounds[1], bounds[2], best_sigma);
+    printf("%u %u %u\n", bounds[0], bounds[1], bounds[2]);
 
     delete[] intensity_sum;
     delete[] pixel_count;
