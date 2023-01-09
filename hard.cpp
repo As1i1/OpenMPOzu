@@ -12,33 +12,32 @@ void print_error(string msg){
     exit(1);
 }
 
-void calc(int &all_pixel_count, int* &pixel_count, long long* &intensity_sum,
+void calc(int &all_pixel_count, int* &pixel_count, int* &intensity_sum,
           int* &t_bounds, double &t_best_sigma, int f0){
     // поиск лучших границ
     for (int f1 = f0 + 1; f1 < 255; f1++) {
         for (int f2 = f1 + 1; f2 < 255; f2++) {
-            int q1 = pixel_count[f0];
-            int q2 = (pixel_count[f1] - pixel_count[f0]);
-            int q3 = (pixel_count[f2] - pixel_count[f1]);
-            int q4 = (pixel_count[255] - pixel_count[f2]);
+            double q1 = pixel_count[f0];
+            double q2 = (pixel_count[f1] - pixel_count[f0]);
+            double q3 = (pixel_count[f2] - pixel_count[f1]);
+            double q4 = (pixel_count[255] - pixel_count[f2]);
 
             if (q1 == 0 || q2 == 0 || q3 == 0 || q4 == 0) {
                 continue;
             }
 
-            long long u1 = intensity_sum[f0];
-            long long u2 = intensity_sum[f1] - intensity_sum[f0];
-            long long u3 = intensity_sum[f2] - intensity_sum[f1];
-            long long u4 = intensity_sum[255] - intensity_sum[f2];
-            double u = intensity_sum[255] / (double) all_pixel_count;
+            double u1 = intensity_sum[f0] / q1;
+            double u2 = (intensity_sum[f1] - intensity_sum[f0]) / q2;
+            double u3 = (intensity_sum[f2] - intensity_sum[f1]) / q3;
+            double u4 = (intensity_sum[255] - intensity_sum[f2]) / q4;
 
-            double n1 = (u1 - u), p1 = ((double) u1 / q1 - u);
-            double n2 = (u2 - u), p2 = ((double) u2 / q2 - u);
-            double n3 = (u3 - u), p3 = ((double) u3 / q3 - u);
-            double n4 = (u4 - u), p4 = ((double) u4 / q4 - u);
+            double u = intensity_sum[255] / all_pixel_count;
 
-            double sigma = ((p1 * n1 + p2 * n2) + (p3 * n3 +     p4 * n4)) / all_pixel_count;
-
+            double sigma = ((q1 * (u1 - u) * (u1 - u) +
+                            q2 * (u2 - u) * (u2 - u)) +
+                            (q3 * (u3 - u) * (u3 - u) +
+                            q4 * (u4 - u) * (u4 - u))) / all_pixel_count;
+            
             if (sigma > t_best_sigma) {
                 t_bounds[0] = f0;
                 t_bounds[1] = f1;
@@ -51,7 +50,7 @@ void calc(int &all_pixel_count, int* &pixel_count, long long* &intensity_sum,
 
 
 void calc_without_omp(int row, int col, int hist[], int* &pixels,
-                      long long* &intensity_sum, int* &pixel_count, int *bounds, double &best_sigma){
+                      int* &intensity_sum, int* &pixel_count, int *bounds, double &best_sigma){
     int all_pixel_count = row * col;
 
     for (int i = 0; i < row * col; i++) {
@@ -89,7 +88,7 @@ void calc_without_omp(int row, int col, int hist[], int* &pixels,
 int main(int argc, char* argv[]) {
     int hist[256];
     memset(hist, 0, sizeof(hist));
-    long long *intensity_sum = new long long[256];
+    int *intensity_sum = new int[256];
     int *pixel_count = new int[256];
     int *pixels;
     int all_pixel_count;
@@ -139,11 +138,6 @@ int main(int argc, char* argv[]) {
     int chunk_size = log2(row * col);
     int *t_bounds = new int[3];
     double t_best_sigma = 0.0;
-    int it_count = all_pixel_count / 4;
-    bool last = false;
-    if (it_count * 4 != all_pixel_count) {
-        last = true;
-    }
 
     double start = omp_get_wtime();
 
@@ -158,16 +152,12 @@ int main(int argc, char* argv[]) {
     {
         // вычисление гистограммы
 #pragma omp for schedule(static, chunk_size) nowait
-        for (int i = 0; i < it_count; i++) {
-            t_hist[pixels[i * 4]]++;
-            t_hist[pixels[i * 4 + 1]]++;
-            t_hist[pixels[i * 4 + 2]]++;
-            t_hist[pixels[i * 4 + 3]]++;
-        }
-        for (int i = it_count * 4; i < all_pixel_count; i++) {
+        for (int i = 0; i < row * col; i += 4) {
             t_hist[pixels[i]]++;
+            t_hist[pixels[i + 1]]++;
+            t_hist[pixels[i + 2]]++;
+            t_hist[pixels[i + 3]]++;
         }
-
 #pragma omp critical
         {
             for (int j = 0; j < 256; j += 4) {
@@ -228,7 +218,7 @@ int main(int argc, char* argv[]) {
     out_file << row << " " << col << "\n";
     out_file << "255\n";
     for (int i = 0; i < row * col; i++) {
-        out_file.put((char)pixels[i]);
+        out_file.put((char) pixels[i]);
     }
     out_file.close();
 
